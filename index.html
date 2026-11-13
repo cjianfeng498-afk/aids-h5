@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>枫红农大 健康无“艾” · 防艾 H5</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Source Han Sans SC", sans-serif;
+    color: #3D352E; background: #EADFCF;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    position: relative; width: 100%; max-width: 480px; height: 100%;
+    margin: 0 auto; overflow: hidden; background: #FBF6EE;
+    box-shadow: 0 0 40px rgba(90,60,40,.18);
+  }
+  .slides {
+    display: flex; flex-direction: column;
+    height: 100%;
+    transition: transform .62s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+  }
+  .slide {
+    position: relative; flex: 0 0 100%; width: 100%; height: 100%;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 26px 22px 24px;
+  }
+  .slide::-webkit-scrollbar { display: none; }
+  .anim { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+  .slide.active .anim { opacity: 1; transform: translateY(0); }
+  .slide.active .anim.d1 { transition-delay: .08s; }
+  .slide.active .anim.d2 { transition-delay: .18s; }
+  .slide.active .anim.d3 { transition-delay: .28s; }
+  .slide.active .anim.d4 { transition-delay: .38s; }
+  .slide.active .anim.d5 { transition-delay: .48s; }
+  .head { display: flex; align-items: center; margin-bottom: 14px; }
+  .no {
+    width: 30px; height: 30px; border-radius: 9px; background: #C63A3A; color: #fff;
+    font-size: 16px; font-weight: 900; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .h-title { margin-left: 10px; font-size: 21px; font-weight: 900; color: #2F2923; letter-spacing: .5px; }
+  .pic { width: 100%; border-radius: 16px; display: block; box-shadow: 0 8px 20px rgba(120,80,50,.13); }
+  .cards { margin-top: 12px; }
+  .item {
+    background: #fff; border-radius: 13px; padding: 11px 14px; margin-bottom: 9px;
+    font-size: 15px; line-height: 1.6; box-shadow: 0 3px 10px rgba(120,80,50,.06);
+    border-left: 5px solid #3A7D5E;
+  }
+  .item.red { border-left-color: #C63A3A; }
+  .item.orange { border-left-color: #E58A3C; }
+  .item b { color: #B23A36; font-weight: 800; }
+  .item .k { color: #2F6B4F; font-weight: 800; }
+  .note {
+    margin-top: 4px; border-radius: 13px; padding: 11px 14px;
+    font-size: 14.5px; line-height: 1.6; font-weight: 700;
+    background: #FBECEA; color: #9C322E;
+  }
+  .note.green { background: #EAF3EC; color: #2F6B4F; }
+  .cover { padding: 0; }
+  .cover .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cover .mask {
+    position: absolute; left: 0; right: 0; top: 0; height: 46%;
+    background: linear-gradient(to bottom, rgba(251,246,238,.97), rgba(251,246,238,.78) 45%, rgba(251,246,238,0));
+  }
+  .cover .ct { position: absolute; top: 9%; left: 0; right: 0; text-align: center; padding: 0 26px; }
+  .cover .t { font-size: 34px; font-weight: 900; color: #A52A2A; letter-spacing: 3px; line-height: 1.2; }
+  .cover .s { margin-top: 12px; font-size: 17px; font-weight: 700; color: #2F6B4F; letter-spacing: 2px; }
+  .cover .lead { margin: 16px auto 0; font-size: 14px; line-height: 1.7; color: #5C5248; max-width: 320px; }
+  .cover .go {
+    position: absolute; bottom: 7%; left: 0; right: 0; text-align: center;
+    color: #A52A2A; font-size: 14px; font-weight: 700;
+  }
+  .cover .go .arrow {
+    display: block; margin: 8px auto 0; width: 26px; height: 26px;
+    border-right: 3px solid #C63A3A; border-bottom: 3px solid #C63A3A;
+    transform: rotate(45deg); animation: bounce 1.4s infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: rotate(45deg) translate(0,0); } 50% { transform: rotate(45deg) translate(6px,6px); } }
+  .end-wish {
+    margin-top: 14px; text-align: center; font-size: 16px; font-weight: 800;
+    color: #2F6B4F; line-height: 1.7;
+  }
+  .author {
+    margin-top: 14px; background: #fff; border-radius: 14px; padding: 14px 16px;
+    box-shadow: 0 3px 12px rgba(120,80,50,.08);
+  }
+  .author .lab { font-size: 13px; color: #9A8E80; font-weight: 700; margin-bottom: 6px; }
+  .author p { font-size: 14px; line-height: 1.7; color: #3D352E; }
+  .dots {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    z-index: 20; display: flex; flex-direction: column; gap: 9px;
+  }
+  .dots i {
+    width: 8px; height: 8px; border-radius: 50%; background: rgba(120,90,70,.32);
+    transition: all .3s; cursor: pointer;
+  }
+  .dots i.on { background: #C63A3A; transform: scale(1.35); }
+  .nav-btn {
+    position: absolute; z-index: 20; left: 50%; transform: translateX(-50%);
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,.82); box-shadow: 0 3px 10px rgba(120,80,50,.18);
+    display: flex; align-items: center; justify-content: center;
+    color: #C63A3A; font-size: 18px; font-weight: 900; cursor: pointer;
+    user-select: none;
+  }
+  .nav-btn.up { top: 8px; }
+  .nav-btn.down { bottom: 8px; }
+  .nav-btn.hide { opacity: 0; pointer-events: none; }
+  .sound-btn {
+    position: absolute; z-index: 20; left: 10px; top: 8px;
+    width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.82);
+    box-shadow: 0 3px 10px rgba(120,80,50,.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer;
+  }
+  .progress {
+    position: absolute; left: 0; bottom: 0; height: 3px; background: #C63A3A;
+    width: 0; z-index: 21; transition: width .5s ease;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="slides" id="slides">
+
+    <section class="slide cover">
+      <img class="bg" src="https://aka.doubaocdn.com/s/YBUuZBJNo8" alt="封面">
+      <div class="mask"></div>
+      <div class="ct">
+        <div class="t anim">枫红农大<br>健康无“艾”</div>
+        <div class="s anim d1">农大学子防艾科普</div>
+        <div class="lead anim d2">红枫正红，青春正好。学点防艾干货，守护自己，也温暖他人。</div>
+      </div>
+      <div class="go anim d3">上滑 / 点击翻页<span class="arrow"></span></div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">1</span><span class="h-title">先认识，不恐慌</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/unBtZwieBa" alt="认识艾滋">
+      <div class="cards">
+        <div class="item anim d2">艾滋病（AIDS）由人类免疫缺陷病毒（HIV）引起，<b>专门攻击人体免疫系统</b>。</div>
+        <div class="item anim d3">感染后可能<b>长期没有明显症状</b>，外表看不出来，却具有传染性。</div>
+        <div class="item anim d4">艾滋病<b>可防可控</b>，早检测、早治疗，感染者同样能正常生活、工作。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">2</span><span class="h-title">病毒怎么传播？记住三条路</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/R8cmRZcJfk" alt="三大传播">
+      <div class="cards">
+        <div class="item red anim d2"><span class="k">性接触传播：</span>最主要的途径，包括同性和异性之间的<b>无保护性行为</b>。</div>
+        <div class="item red anim d3"><span class="k">血液传播：</span>共用注射器、输入污染血液、共用剃须刀或牙刷等。</div>
+        <div class="item red anim d4"><span class="k">母婴传播：</span>怀孕、分娩、哺乳时可能传给孩子，及时干预可大幅降低风险。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">3</span><span class="h-title">这些日常接触，完全放心</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/1qmXbwqYnU" alt="日常不传播">
+      <div class="cards">
+        <div class="item anim d2">握手拥抱、共同进餐、咳嗽打喷嚏、共用马桶和泳池、一起运动、<b>蚊虫叮咬</b>，都不会传播。</div>
+        <div class="item anim d3">HIV 离开人体后很脆弱，很快就会失去活性。</div>
+        <div class="note green anim d4">日常相处零风险，别让误会变成歧视。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">4</span><span class="h-title">预防其实不难，关键在坚持</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/cv5Ftr8q1E" alt="怎么预防">
+      <div class="cards">
+        <div class="item orange anim d2"><b>正确使用安全套</b>，是最有效的防护手段之一。</div>
+        <div class="item orange anim d3">珍爱生命、远离毒品，<b>绝不与他人共用针具</b>。</div>
+        <div class="item orange anim d4">看病、拔牙、纹身选择正规机构，不使用来源不明的血液制品。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">5</span><span class="h-title">万一暴露，记住“72小时黄金时间”</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/ATv06Zlm8B" alt="阻断">
+      <div class="cards">
+        <div class="item red anim d2">发生高危行为后<b>72 小时内</b>服用阻断药，越早越好，最好在 24 小时内。</div>
+        <div class="item red anim d3">在医生指导下<b>连续服用 28 天</b>，并按要求复查。</div>
+        <div class="note anim d4">尽快前往正规医院或疾控中心，阻断药不能自行购买服用。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">6</span><span class="h-title">想检测？这些渠道都可以</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/w9trwT4R10" alt="检测">
+      <div class="cards">
+        <div class="item anim d2"><span class="k">疾控中心：</span>免费、保密、专业，可匿名咨询。</div>
+        <div class="item anim d3"><span class="k">正规医院：</span>皮肤性病科或感染科抽血检测；自检试剂结果可疑要及时复核。</div>
+        <div class="note green anim d4">窗口期提示：四代试剂通常 2 至 3 周可检出，按医嘱复查确认。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">7</span><span class="h-title">红丝带，系住理解与尊重</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/ZZWkGUutjw" alt="反歧视">
+      <div class="cards">
+        <div class="item anim d2">红丝带象征对感染者的关心、支持和对生命的热爱。</div>
+        <div class="item anim d3">感染者需要的不是躲避，而是<b>平等对待</b>。</div>
+        <div class="note green anim d4">知艾是为了防艾，防艾不妨爱。</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="head anim"><span class="no">8</span><span class="h-title">青春无“艾”，健康同行</span></div>
+      <img class="pic anim d1" src="https://aka.doubaocdn.com/s/ucCMwVXzz3" alt="封底">
+      <div class="end-wish anim d2">朴诚奋勉，求实创新<br>愿每一位农大学子健康成长，青春无“艾”</div>
+      <div class="author anim d3">
+        <div class="lab">作者信息</div>
+        <p>曹建峰　化材院<br>23 级材料化学专业 3 班<br>学号 202340590304<br>电话 17870520537</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="dots" id="dots"></div>
+  <div class="sound-btn" id="soundBtn">🔇</div>
+  <div class="nav-btn up hide" id="upBtn">‹</div>
+  <div class="nav-btn down" id="downBtn">›</div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+(function () {
+  var slidesEl = document.getElementById('slides');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var idx = 0, locked = false;
+
+  var dotsEl = document.getElementById('dots');
+  for (var i = 0; i < total; i++) {
+    (function (n) {
+      var d = document.createElement('i');
+      d.addEventListener('click', function () { go(n); });
+      dotsEl.appendChild(d);
+    })(i);
+  }
+  var dots = Array.prototype.slice.call(dotsEl.children);
+  var upBtn = document.getElementById('upBtn');
+  var downBtn = document.getElementById('downBtn');
+  var progress = document.getElementById('progress');
+
+  var actx = null, soundOn = false;
+  var soundBtn = document.getElementById('soundBtn');
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊' : '🔇';
+    if (soundOn && !actx) {
+      try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+    }
+  });
+  function playTick() {
+    if (!soundOn || !actx) return;
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = 420;
+    g.gain.setValueAtTime(0.08, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.12);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + 0.13);
+  }
+
+  function render() {
+    slidesEl.style.transform = 'translateY(-' + (idx * 100) + '%)';
+    slides.forEach(function (s, n) { s.classList.toggle('active', n === idx); });
+    dots.forEach(function (d, n) { d.classList.toggle('on', n === idx); });
+    upBtn.classList.toggle('hide', idx === 0);
+    downBtn.classList.toggle('hide', idx === total - 1);
+    progress.style.width = ((idx + 1) / total * 100) + '%';
+  }
+  function go(n) {
+    n = Math.max(0, Math.min(total - 1, n));
+    if (n === idx || locked) return;
+    locked = true;
+    idx = n; render(); playTick();
+    setTimeout(function () { locked = false; }, 640);
+  }
+  function next() { go(idx + 1); }
+  function prev() { go(idx - 1); }
+
+  upBtn.addEventListener('click', prev);
+  downBtn.addEventListener('click', next);
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  });
+
+  var wheelLock = false;
+  document.querySelector('.stage').addEventListener('wheel', function (e) {
+    var cur = slides[idx];
+    if (e.deltaY > 0 && cur.scrollTop + cur.clientHeight < cur.scrollHeight - 2) return;
+    if (e.deltaY < 0 && cur.scrollTop > 2) return;
+    if (wheelLock) return;
+    wheelLock = true;
+    if (e.deltaY > 0) next(); else if (e.deltaY < 0) prev();
+    setTimeout(function () { wheelLock = false; }, 700);
+  }, { passive: true });
+
+  var startY = 0, startX = 0, touching = false;
+  var stage = document.querySelector('.stage');
+  stage.addEventListener('touchstart', function (e) {
+    startY = e.touches[0].clientY; startX = e.touches[0].clientX; touching = true;
+  }, { passive: true });
+  stage.addEventListener('touchend', function (e) {
+    if (!touching) return;
+    touching = false;
+    var dy = e.changedTouches[0].clientY - startY;
+    var dx = e.changedTouches[0].clientX - startX;
+    var cur = slides[idx];
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+      if (dy < 0 && cur.scrollTop + cur.clientHeight >= cur.scrollHeight - 2) next();
+      else if (dy > 0 && cur.scrollTop <= 2) prev();
+    }
+  }, { passive: true });
+
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('img'));
+  var loaded = 0;
+  imgs.forEach(function (im) {
+    if (im.complete) { loaded++; }
+    else im.addEventListener('load', function () { loaded++; });
+    im.addEventListener('error', function () { loaded++; });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
